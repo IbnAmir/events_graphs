@@ -57,7 +57,9 @@ class _MyHomePageState extends State<MyHomePage> {
             final List<ChartData> nominationPartyList = List.generate(
                 audience.length,
                 (index) => ChartData(
-                    audience[index].nominationParty ?? "غير محدد",
+                    audience[index].nominationParty == ""
+                        ? "غير محدد"
+                        :audience[index].nominationParty ?? "غير محدد",
                     audience
                         .where((element) =>
                             element.nominationParty ==
