@@ -54,17 +54,19 @@ class _MyHomePageState extends State<MyHomePage> {
             audience.addAll(state.unExpected);
             audience.addAll(state.actual);
 
-            final List<ChartData> nominationPartyList = List.generate(
+            final List<ChartData2> nominationPartyList = List.generate(
                 audience.length,
-                (index) => ChartData(
+                    (index) => ChartData2(
                     audience[index].nominationParty == ""
                         ? "غير محدد"
                         :audience[index].nominationParty ?? "غير محدد",
                     audience
                         .where((element) =>
-                            element.nominationParty ==
-                            audience[index].nominationParty)
-                        .length));
+                    element.nominationParty ==
+                        audience[index].nominationParty)
+                        .length,
+                    state.expected.where((element) => element.nominationParty == audience[index].nominationParty).length
+                ));
 
             final List<ChartData> scannerPersonList = List.generate(
                 audience.length,
@@ -105,15 +107,23 @@ class _MyHomePageState extends State<MyHomePage> {
                                   interval: 1),
                               tooltipBehavior:
                                   TooltipBehavior(enable: true, header: ""),
-                              series: <ChartSeries<ChartData, String>>[
+                              series: <ChartSeries<ChartData2, String>>[
                                 // Renders column chart
-                                ColumnSeries<ChartData, String>(
+                                ColumnSeries<ChartData2, String>(
                                     dataSource: nominationPartyList,
                                     // color: AppColors.redOrangeColor,
-                                    xValueMapper: (ChartData data, _) =>
+                                    xValueMapper: (ChartData2 data, _) =>
                                         data.name,
-                                    yValueMapper: (ChartData data, _) =>
-                                        data.count)
+                                    yValueMapper: (ChartData2 data, _) =>
+                                        data.count),
+                                ColumnSeries<ChartData2, String>(
+                                    color: const Color(0xFF3DD598),
+                                    opacity: 0.9,
+                                    width: 0.4,
+                                    dataSource: nominationPartyList,
+                                    xValueMapper: (ChartData2 data, _) => data.name,
+                                    yValueMapper: (ChartData2 data, _) => data.total
+                                )
                               ]),
                         ],
                       ),
@@ -171,4 +181,15 @@ class ChartData {
 
   final String name;
   final int count;
+}
+class ChartData2 {
+  ChartData2(
+      this.name,
+      this.count,
+      this.total,
+      );
+
+  final String name;
+  final int count;
+  final int total;
 }
