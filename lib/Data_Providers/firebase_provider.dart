@@ -2042,8 +2042,6 @@ class FirebaseProvider {
         .map((event) {
       return event.docs
           .map((e) => FirebaseCampaignBeneficiary.fromJson(e.data()))
-          .toList()
-          .reversed
           .toList();
     });
   }

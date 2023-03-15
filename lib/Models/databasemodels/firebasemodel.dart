@@ -1181,10 +1181,14 @@ class FirebaseCampaignBeneficiary extends Equatable {
   String? nationalImageBack;
   String? nationalImageFront;
   String? nominationParty;
+  String? mappedNominationParty;
   String? personalImage;
   String? phoneNumber;
   String? seatNumber;
   String? campaignID;
+  String? age;
+  bool? isMale;
+  String? governorate;
 
   FirebaseCampaignBeneficiary(
       {this.benefits,
@@ -1195,6 +1199,10 @@ class FirebaseCampaignBeneficiary extends Equatable {
         this.personalImage,
         this.phoneNumber,
         this.seatNumber,
+        this.isMale,
+        this.governorate,
+        this.mappedNominationParty,
+        this.age,
         this.campaignID});
 
   FirebaseCampaignBeneficiary.fromJson(Map<String, dynamic> json) {
@@ -1204,7 +1212,27 @@ class FirebaseCampaignBeneficiary extends Equatable {
         benefits!.add(FirebaseCampaignBenefits.fromJson(v));
       });
     }
-    nationalID = json['nationalID'];
+    nationalID = json['nationalID'].toString();
+    if(nationalID?.length == 14){
+     if(nationalID != null){
+       governorate = "${nationalID![7]}${nationalID![8]}";
+       if(nationalID![0] == "2"){
+         String birthYear = "19${nationalID![1]}${nationalID![2]}";
+         int birthYearInt = int.tryParse(birthYear)??1950;
+         age = (2023 - birthYearInt).toString();
+       }else if(nationalID![0] =="3"){
+         String birthYear = "20${nationalID![1]}${nationalID![2]}";
+         int birthYearInt = int.tryParse(birthYear)??2000;
+         age = (2023 - birthYearInt).toString();
+       }
+       int int12thNumber = int.tryParse(nationalID![12])??0;
+       if(int12thNumber.isOdd){
+         isMale = true;
+       }else{
+         isMale = false;
+       }
+     }
+    }
     nationalImageBack = json['nationalImageBack'];
     nationalImageFront = json['nationalImageFront'];
     nominationParty = json['nominationParty'];
@@ -1227,6 +1255,7 @@ class FirebaseCampaignBeneficiary extends Equatable {
     data['seatNumber'] = seatNumber;
     return data;
   }
+
 
   @override
   List<Object?> get props => [

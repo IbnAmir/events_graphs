@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,35 +51,35 @@ class _MyHomePageState extends State<MyHomePage> {
         create: (context) => EventsGraphsBloc()..updateStream(),
         child: BlocBuilder<EventsGraphsBloc, EventsGraphsState>(
           builder: (context, state) {
-            List<FirebaseCampaignBeneficiary> audience = [];
-            audience.addAll(state.unExpected);
-            audience.addAll(state.actual);
+            // List<FirebaseCampaignBeneficiary> audience = [];
+            // audience.addAll(state.expected);
+            // audience.addAll(state.actual);
 
-            final List<ChartData2> nominationPartyList = List.generate(
-                audience.length,
-                    (index) => ChartData2(
-                    audience[index].nominationParty == ""
-                        ? "غير محدد"
-                        :audience[index].nominationParty ?? "غير محدد",
-                    audience
-                        .where((element) =>
-                    element.nominationParty ==
-                        audience[index].nominationParty)
-                        .length,
-                    state.expected.where((element) => element.nominationParty == audience[index].nominationParty).length
-                ));
+            // final List<ChartData2> nominationPartyList = List.generate(
+            //     audience.length,
+            //         (index) => ChartData2(
+            //         audience[index].nominationParty == ""
+            //             ? "غير محدد"
+            //             :audience[index].nominationParty ?? "غير محدد",
+            //         audience
+            //             .where((element) =>
+            //         element.nominationParty ==
+            //             audience[index].nominationParty)
+            //             .length,
+            //         state.expected.where((element) => element.nominationParty == audience[index].nominationParty).length
+            //     ));
 
-            final List<ChartData> scannerPersonList = List.generate(
-                audience.length,
-                (index) => ChartData(
-                    audience[index].benefits?[0].addedBy == ""
-                        ? "غير محدد"
-                        : (audience[index].benefits?[0].addedBy ?? "غير محدد"),
-                    audience
-                        .where((element) =>
-                            element.benefits?[0].addedBy ==
-                            audience[index].benefits?[0].addedBy)
-                        .length));
+            // final List<ChartData> scannerPersonList = List.generate(
+            //     audience.length,
+            //     (index) => ChartData(
+            //         audience[index].benefits?[0].addedBy == ""
+            //             ? "غير محدد"
+            //             : (audience[index].benefits?[0].addedBy ?? "غير محدد"),
+            //         audience
+            //             .where((element) =>
+            //                 element.benefits?[0].addedBy ==
+            //                 audience[index].benefits?[0].addedBy)
+            //             .length));
 
             return SingleChildScrollView(
               child: Padding(
@@ -93,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Column(
                         children: [
                           Text(
-                            'إجمالي العدد: ${((state.actual.length) + (state.unExpected.length))}',
+                            'إجمالي العدد: ${((state.countExpected) + (state.unExpected.length))}',
                             style: const TextStyle(
                               fontSize: 18,
                               fontFamily: 'Cairo',
@@ -110,20 +111,20 @@ class _MyHomePageState extends State<MyHomePage> {
                               series: <ChartSeries<ChartData2, String>>[
                                 // Renders column chart
                                 ColumnSeries<ChartData2, String>(
-                                    dataSource: nominationPartyList,
+                                    dataSource: state.nominationPartyList,
                                     // color: AppColors.redOrangeColor,
                                     xValueMapper: (ChartData2 data, _) =>
                                         data.name,
                                     yValueMapper: (ChartData2 data, _) =>
                                         data.count),
-                                ColumnSeries<ChartData2, String>(
-                                    color: const Color(0xFF3DD598),
-                                    opacity: 0.9,
-                                    width: 0.4,
-                                    dataSource: nominationPartyList,
-                                    xValueMapper: (ChartData2 data, _) => data.name,
-                                    yValueMapper: (ChartData2 data, _) => data.total
-                                )
+                                // ColumnSeries<ChartData2, String>(
+                                //     color: const Color(0xFF3DD598),
+                                //     opacity: 0.9,
+                                //     width: 0.4,
+                                //     dataSource: nominationPartyList,
+                                //     xValueMapper: (ChartData2 data, _) => data.name,
+                                //     yValueMapper: (ChartData2 data, _) => data.total
+                                // )
                               ]),
                         ],
                       ),
@@ -182,8 +183,8 @@ class ChartData {
   final String name;
   final int count;
 }
-class ChartData2 {
-  ChartData2(
+class ChartData2 extends Equatable{
+  const ChartData2(
       this.name,
       this.count,
       this.total,
@@ -192,4 +193,8 @@ class ChartData2 {
   final String name;
   final int count;
   final int total;
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [name,count,total];
 }
